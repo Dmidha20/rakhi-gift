@@ -38,7 +38,6 @@ export const CAROUSEL_MEMORIES: CarouselMemoryData[] = [
   },
   {
     id: "memory-4",
-    // caption: "Partners in crime 👫",
     caption: "My forever annoying brother 😂",
     imageSrc: memory4,
   },
@@ -49,14 +48,19 @@ export const CAROUSEL_MEMORIES: CarouselMemoryData[] = [
   },
   {
     id: "memory-6",
-    // caption: "Welcome to the family, Bhabhi 👑",
     caption: "After Marriage 👑 ❤️ ",
     imageSrc: memory7,
   },
-
   {
     id: "memory-7",
     caption: "Partners in crime 👫",
     imageSrc: memory6,
   },
 ];
+
+export const MEMORIES: MemoryItem[] = CAROUSEL_MEMORIES.map((item, index) => ({
+  id: index + 1,
+  title: item.caption,
+  caption: item.caption,
+  image: item.imageSrc,
+}));

@@ -1,6 +1,6 @@
 import { useThree } from "@react-three/fiber";
 import { useState } from "react";
-import { MEMORIES } from "../../data/memories";
+import { MEMORIES, type MemoryItem } from "../../data/memories";
 import { MemoryFrame } from "./MemoryFrame";
 
 type MemorySceneProps = {
@@ -76,7 +76,7 @@ export function MemoryScene({
 
   return (
     <group position={[0, -0.15, 0]}>
-      {MEMORIES.map((memory, index) => {
+      {MEMORIES.map((memory: MemoryItem, index: number) => {
         const { pos, rot } = getFrameTransform(index);
         return (
           <MemoryFrame

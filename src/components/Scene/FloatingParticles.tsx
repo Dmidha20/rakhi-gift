@@ -1,6 +1,6 @@
 import { Points, PointMaterial } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { type ComponentRef, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import {
   AdditiveBlending,
   type Group,
@@ -50,103 +50,94 @@ function FestiveBokeh() {
         phase: 1.5,
       },
       {
-        x: -2.6,
+        x: -4.5,
         y: -0.4,
-        z: -4.8,
-        scale: 0.8,
+        z: -6.0,
+        scale: 1.35,
+        color: "#9c27b0",
+        baseOpacity: 0.3,
+        speed: 0.7,
+        phase: 3.1,
+      },
+      {
+        x: 4.2,
+        y: -0.8,
+        z: -5.8,
+        scale: 1.05,
         color: "#ab47bc",
         baseOpacity: 0.32,
         speed: 0.9,
-        phase: 2.7,
+        phase: 4.2,
       },
       {
-        x: 3.2,
-        y: 0.2,
-        z: -5.0,
-        scale: 1.0,
-        color: "#ffd54f",
-        baseOpacity: 0.3,
-        speed: 0.7,
-        phase: 3.9,
-      },
-      {
-        x: -4.5,
-        y: 0.8,
+        x: -1.8,
+        y: 3.2,
         z: -6.8,
-        scale: 1.35,
-        color: "#9c27b0",
-        baseOpacity: 0.25,
-        speed: 0.5,
-        phase: 4.8,
-      },
-      {
-        x: 4.4,
-        y: 1.4,
-        z: -6.0,
-        scale: 0.95,
-        color: "#ea80fc",
-        baseOpacity: 0.35,
-        speed: 0.75,
-        phase: 5.4,
-      },
-      {
-        x: -1.2,
-        y: 3.4,
-        z: -7.2,
-        scale: 1.4,
-        color: "#e040fb",
-        baseOpacity: 0.22,
-        speed: 0.45,
-        phase: 0.9,
-      },
-      {
-        x: 2.0,
-        y: 3.6,
-        z: -7.0,
-        scale: 1.25,
+        scale: 0.85,
         color: "#ff80ab",
         baseOpacity: 0.28,
-        speed: 0.55,
-        phase: 2.1,
+        speed: 1.1,
+        phase: 0.8,
+      },
+      {
+        x: 1.9,
+        y: 3.4,
+        z: -6.5,
+        scale: 0.9,
+        color: "#ffd54f",
+        baseOpacity: 0.25,
+        speed: 1.0,
+        phase: 2.4,
+      },
+      {
+        x: 0.0,
+        y: -1.8,
+        z: -5.2,
+        scale: 1.4,
+        color: "#6a1b9a",
+        baseOpacity: 0.4,
+        speed: 0.5,
+        phase: 5.0,
       },
       {
         x: -3.2,
-        y: -1.4,
-        z: -4.5,
-        scale: 0.85,
-        color: "#ffd700",
+        y: -1.5,
+        z: -6.5,
+        scale: 1.1,
+        color: "#d500f9",
         baseOpacity: 0.28,
         speed: 0.85,
-        phase: 3.2,
+        phase: 1.9,
       },
       {
-        x: 3.0,
-        y: -1.2,
-        z: -4.5,
-        scale: 0.9,
-        color: "#e040fb",
-        baseOpacity: 0.32,
-        speed: 0.7,
-        phase: 1.1,
+        x: 3.1,
+        y: -1.6,
+        z: -6.4,
+        scale: 1.2,
+        color: "#ba68c8",
+        baseOpacity: 0.3,
+        speed: 0.75,
+        phase: 3.8,
       },
     ];
   }, []);
 
   useFrame(({ clock }) => {
     if (!group.current) return;
-    const t = clock.getElapsedTime();
+    const time = clock.getElapsedTime();
+
     group.current.children.forEach((child, i) => {
       const orb = bokehOrbs[i];
+      if (!orb) return;
       const mesh = child as Mesh;
-      if (mesh.material) {
-        const flicker =
-          Math.sin(t * orb.speed + orb.phase) * 0.08 +
-          Math.sin(t * (orb.speed * 2.1) + orb.phase * 1.4) * 0.04;
-        (mesh.material as unknown as { opacity: number }).opacity = Math.max(
-          0.05,
-          orb.baseOpacity + flicker,
-        );
-      }
+      const pulse = Math.sin(time * orb.speed + orb.phase) * 0.15;
+      const driftX = Math.sin(time * 0.3 + orb.phase) * 0.12;
+      const driftY = Math.cos(time * 0.25 + orb.phase) * 0.1;
+
+      mesh.position.x = orb.x + driftX;
+      mesh.position.y = orb.y + driftY;
+      const s = orb.scale * (1 + pulse);
+      mesh.scale.set(s, s, s);
     });
   });
 
@@ -170,7 +161,7 @@ function FestiveBokeh() {
 
 // Foreground floating glowing sparkles / dust motes
 function ForegroundDustMotes() {
-  const pointsRef = useRef<ComponentRef<typeof PointsObject>>(null);
+  const pointsRef = useRef<PointsObject>(null);
 
   const positions = useMemo(() => {
     const random = createSeededRandom(999);
@@ -223,7 +214,7 @@ function ForegroundDustMotes() {
 }
 
 export function FloatingParticles({ isOpen }: FloatingParticlesProps) {
-  const pointsRef = useRef<ComponentRef<typeof PointsObject>>(null);
+  const pointsRef = useRef<PointsObject>(null);
 
   const [positions, velocities] = useMemo(() => {
     const random = createSeededRandom(1337);
@@ -288,7 +279,7 @@ export function FloatingParticles({ isOpen }: FloatingParticlesProps) {
         />
       </Points>
 
-      {/* Foreground Crisp Floating Particles */}
+      {/* Foreground Floating Golden Sparkles */}
       <ForegroundDustMotes />
     </>
   );
